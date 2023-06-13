@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { router as citiesRouter } from "./routes/citiesRouter.js";
+import { router as restaurantsRouter } from "./routes/restaurantsRouter.js";
 
 const app = express();
 
@@ -8,6 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/cities", citiesRouter);
+app.use("/api/restaurants", restaurantsRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
