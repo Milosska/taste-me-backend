@@ -3,7 +3,9 @@ import HttpError from "../HttpError.js";
 import fs from "fs";
 
 export const cloudinaryImgSave = async (file, params, destFolder) => {
-  const { path: oldPath, filename } = file[0];
+  let currentFile = Array.isArray(file) ? file[0] : file;
+
+  const { path: oldPath, filename } = currentFile;
 
   Cloudinary.url(filename, params);
 
