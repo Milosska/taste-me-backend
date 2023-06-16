@@ -21,9 +21,11 @@ const schema = new Schema(
         "beverage",
         "burger",
         "pizza",
+        "sushi",
         "sandwich",
         "chicken",
         "salad",
+        "soup",
         "dessert",
         "sauce",
         "other",
@@ -32,7 +34,7 @@ const schema = new Schema(
     },
     cuisine: {
       type: String,
-      enum: ["American", "Italian", "Mexican"],
+      enum: ["American", "Italian", "Japanese", "Middle Eastern"],
     },
     imgURL: {
       type: String,

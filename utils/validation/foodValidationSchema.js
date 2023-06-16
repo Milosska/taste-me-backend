@@ -4,14 +4,16 @@ const foodTypes = [
   "beverage",
   "burger",
   "pizza",
+  "sushi",
   "sandwich",
   "chicken",
   "salad",
+  "soup",
   "dessert",
   "sauce",
   "other",
 ];
-const cuisines = ["American", "Italian", "Mexican"];
+const cuisines = ["American", "Italian", "Japanese", "Middle Eastern"];
 
 export const createFoodValidationSchema = Joi.object({
   name: Joi.string().required().messages({
