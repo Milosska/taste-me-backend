@@ -2,8 +2,8 @@ import catchAsyncWrapper from "../utils/catchAsyncWrapper.js";
 import { getFoodsService, addFoodService } from "../services/foodsService.js";
 
 export const getFoods = catchAsyncWrapper(async (req, res, next) => {
-  const { restaurantId } = req.params;
-  const foods = await getFoodsService(restaurantId, req.query);
+  const { restaurantName } = req.params;
+  const foods = await getFoodsService(restaurantName, req.query);
   res.status(200).json(foods);
 });
 

@@ -3,19 +3,18 @@ import Restaurant from "../models/Restaurant.js";
 import { cloudinaryImgSave } from "../utils/cloudinary/cloudinaryAPI.js";
 import HttpError from "../utils/HttpError.js";
 
-export const getFoodsService = async (restaurantId, query) => {
+export const getFoodsService = async (restaurantName, query) => {
   const foods = await Food.find(
-    { restaurant: restaurantId },
+    { restaurant: restaurantName },
     "-createdAt -updatedAt"
-  ).populate("restaurant", "-createdAt -updatedAt");
-
+  ).populate("restaurantData", "-createdAt -updatedAt");
   return foods;
 };
 
 export const addFoodService = async (file, data) => {
   const { restaurant, name } = data;
 
-  const restaurantInBase = await Restaurant.findById(restaurant);
+  const restaurantInBase = await Restaurant.findOne({ name: restaurant });
   if (!restaurantInBase) {
     throw new HttpError(404, "Restaurant is not found");
   }

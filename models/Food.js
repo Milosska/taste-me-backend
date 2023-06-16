@@ -11,8 +11,7 @@ const schema = new Schema(
       required: true,
     },
     restaurant: {
-      type: Schema.Types.ObjectId,
-      ref: "restaurant",
+      type: String,
       required: true,
     },
     type: {
@@ -41,8 +40,20 @@ const schema = new Schema(
       required: true,
     },
   },
-  { versionKey: false, timestamps: true }
+  {
+    versionKey: false,
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+schema.virtual("restaurantData", {
+  ref: "restaurant",
+  localField: "restaurant",
+  foreignField: "name",
+  justOne: false,
+});
 
 const Food = model("food", schema);
 export default Food;

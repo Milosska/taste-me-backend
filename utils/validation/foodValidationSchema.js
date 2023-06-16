@@ -23,10 +23,8 @@ export const createFoodValidationSchema = Joi.object({
     "any.required": "field 'price' is missing",
     "number.precision": "'price' field must have no more than 2 decimal places",
   }),
-  restaurant: Joi.string().alphanum().length(24).required().messages({
+  restaurant: Joi.string().required().messages({
     "any.required": "field 'restaurant' is missing",
-    "string.alphanum": "{{#label}} must only contain alpha-numeric characters",
-    "string.length": "{{#label}} length must be {{#limit}} characters long",
   }),
   type: Joi.string()
     .valid(...foodTypes)

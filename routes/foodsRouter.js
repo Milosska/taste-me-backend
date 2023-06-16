@@ -14,4 +14,4 @@ router
     addFood
   );
 
-router.route("/:restaurantId").get(getFoods);
+router.route("/:restaurantName").get(getFoods);
