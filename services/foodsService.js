@@ -4,16 +4,9 @@ import { cloudinaryImgSave } from "../utils/cloudinary/cloudinaryAPI.js";
 import HttpError from "../utils/HttpError.js";
 
 export const getFoodsService = async (restaurantId, query) => {
-  const { page = 1, limit = 20 } = query;
-  const skip = (page - 1) * limit;
-
   const foods = await Food.find(
     { restaurant: restaurantId },
-    "-createdAt -updatedAt",
-    {
-      skip,
-      limit,
-    }
+    "-createdAt -updatedAt"
   ).populate("restaurant", "-createdAt -updatedAt");
 
   return foods;
