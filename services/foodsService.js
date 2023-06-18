@@ -4,9 +4,16 @@ import { cloudinaryImgSave } from "../utils/cloudinary/cloudinaryAPI.js";
 import HttpError from "../utils/HttpError.js";
 
 export const getFoodsService = async (restaurantName, query) => {
+  const { page = 1, limit = 5 } = query;
+  const skip = (page - 1) * limit;
+
   const foods = await Food.find(
     { restaurant: restaurantName },
-    "-createdAt -updatedAt"
+    "-createdAt -updatedAt",
+    {
+      skip,
+      limit,
+    }
   ).populate("restaurantData", "-createdAt -updatedAt");
   return foods;
 };
@@ -32,4 +39,18 @@ export const addFoodService = async (file, data) => {
   });
 
   return newFood;
+};
+
+export const updateFoodsService = async (restaurantId) => {
+  const restaurantInBase = await Restaurant.findById(restaurantId);
+  if (!restaurantInBase) {
+    throw new HttpError(404, "Restaurant is not found");
+  }
+
+  const updatedFoods = await Food.updateMany(
+    { restaurant: restaurantId },
+    { $set: { restaurant: restaurantInBase.name } }
+  );
+
+  return updatedFoods;
 };
