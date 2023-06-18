@@ -15,7 +15,14 @@ export const getFoodsService = async (restaurantName, query) => {
       limit,
     }
   ).populate("restaurantData", "-createdAt -updatedAt");
-  return foods;
+
+  const totalFetchedDocsCount = await Food.aggregate()
+    .match({
+      restaurant: { $eq: restaurantName },
+    })
+    .count("totalCount");
+
+  return { results: foods, totalCount: totalFetchedDocsCount[0].totalCount };
 };
 
 export const addFoodService = async (file, data) => {
