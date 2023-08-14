@@ -4,11 +4,20 @@ import { cloudinaryImgSave } from "../utils/cloudinary/cloudinaryAPI.js";
 import HttpError from "../utils/HttpError.js";
 
 export const getFoodsService = async (restaurantName, query) => {
-  const { page = 1, limit = 5 } = query;
+  const { page = 1, limit = 5, type, cuisine } = query;
   const skip = (page - 1) * limit;
 
+  let additionalFilters = {};
+
+  if (type) {
+    additionalFilters.type = type;
+  }
+  if (cuisine) {
+    additionalFilters.cuisine = cuisine;
+  }
+
   const foods = await Food.find(
-    { restaurant: restaurantName },
+    { restaurant: restaurantName, ...additionalFilters },
     "-createdAt -updatedAt",
     {
       skip,
@@ -16,9 +25,34 @@ export const getFoodsService = async (restaurantName, query) => {
     }
   ).populate("restaurantData", "-createdAt -updatedAt");
 
+  let condition = {
+    $cond: {
+      if: type,
+      then: {
+        $match: {
+          restaurant: { $eq: restaurantName },
+          type: { $eq: type },
+        },
+      },
+      else: {
+        $match: {
+          restaurant: { $eq: restaurantName },
+        },
+      },
+    },
+  };
+
+  // const totalFetchedDocsCount = await Food.aggregate()
+  //   .match({
+  //     restaurant: { $eq: restaurantName },
+  //   })
+  //   .count("totalCount");
+
   const totalFetchedDocsCount = await Food.aggregate()
     .match({
       restaurant: { $eq: restaurantName },
+      ...(type ? { type: type } : {}),
+      ...(cuisine ? { cuisine: cuisine } : {}),
     })
     .count("totalCount");
 
