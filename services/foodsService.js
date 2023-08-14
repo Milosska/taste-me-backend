@@ -7,46 +7,34 @@ export const getFoodsService = async (restaurantName, query) => {
   const { page = 1, limit = 5, type, cuisine } = query;
   const skip = (page - 1) * limit;
 
-  let additionalFilters = {};
-
-  if (type) {
-    additionalFilters.type = type;
-  }
-  if (cuisine) {
-    additionalFilters.cuisine = cuisine;
-  }
-
-  const foods = await Food.find(
-    { restaurant: restaurantName, ...additionalFilters },
-    "-createdAt -updatedAt",
-    {
-      skip,
-      limit,
-    }
-  ).populate("restaurantData", "-createdAt -updatedAt");
-
-  let condition = {
-    $cond: {
-      if: type,
-      then: {
-        $match: {
-          restaurant: { $eq: restaurantName },
-          type: { $eq: type },
-        },
-      },
-      else: {
-        $match: {
-          restaurant: { $eq: restaurantName },
-        },
-      },
-    },
+  let filters = {
+    restaurant: restaurantName,
   };
 
-  // const totalFetchedDocsCount = await Food.aggregate()
-  //   .match({
-  //     restaurant: { $eq: restaurantName },
-  //   })
-  //   .count("totalCount");
+  if (type || cuisine) {
+    if (type) {
+      filters.type = type;
+    }
+
+    if (cuisine) {
+      filters.cuisine = cuisine;
+    }
+
+    const typeExistsForRestaurant = await Food.exists({
+      ...filters,
+    });
+
+    if (type && !typeExistsForRestaurant) {
+      throw new HttpError(
+        404,
+        "Foods with such params are not avaliable in this restaurant!"
+      );
+    }
+  }
+  const foods = await Food.find({ ...filters }, "-createdAt -updatedAt", {
+    skip,
+    limit,
+  }).populate("restaurantData", "-createdAt -updatedAt");
 
   const totalFetchedDocsCount = await Food.aggregate()
     .match({
